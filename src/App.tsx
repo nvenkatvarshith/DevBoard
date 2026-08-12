@@ -1,10 +1,12 @@
-
 import './App.css'
+import Landing from './pages/Landing'
+import Signin from './pages/Signin'
 
 function App() {
   return (
     <div>
-        <h1>Hello World!</h1>
+        {/* <Landing /> */}
+        <Signin />
     </div>
   )
 }
