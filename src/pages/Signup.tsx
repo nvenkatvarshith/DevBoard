@@ -1,8 +1,9 @@
+import { Link } from "react-router-dom";
 function Signup(){
     return (
         <div className="container mt-3">
             <div>
-                <h4 className="fw-bold"><i className="fa-solid fa-d"></i>DevBoard</h4>
+                <h4 className="fw-bold"><Link to="/" className="text-dark text-decoration-none"><i className="fa-solid fa-d"></i>DevBoard</Link></h4>
             </div>
             <div>
                 <div className="card mx-auto mt-5" style={{width: '28rem'}}>
@@ -55,7 +56,7 @@ function Signup(){
                     </div>
                 </div>
                 <div className="text-center mt-2">
-                    <p>Already have an account? <a href="#" className="text-dark fw-bold text-decoration-none">Sign In</a></p>
+                    <p>Already have an account? <Link to="/signin" className="text-dark fw-bold text-decoration-none">Sign In</Link></p>
                 </div>
             </div>
         </div>

@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
+
 function Signin(){
     return (
         <div className="container mt-3">
             <div>
-                <h4 className="fw-bold"><i className="fa-solid fa-d"></i>DevBoard</h4>
+                <h4 className="fw-bold"><Link to="/" className="text-dark text-decoration-none"><i className="fa-solid fa-d"></i>DevBoard</Link></h4>
             </div>
             <div>
                 <div className="card mx-auto mt-5" style={{width: '25rem'}}>
@@ -25,7 +27,7 @@ function Signin(){
                                     <input type="password" className="form-control" id="password" name="password"/>
                                 </div>
                                 <div className="text-end mb-2">
-                                    <a href="#" className="text-dark">Forgot Password?</a>
+                                    <Link to="/forgot-password" className="text-dark">Forgot Password?</Link>
                                 </div>
                                 <div className="mb-2">
                                     <button type="button" className="btn btn-outline-dark w-100">Sign in</button>
@@ -42,7 +44,7 @@ function Signin(){
                     </div>
                 </div>
                 <div className="text-center mt-2">
-                    <p>New to DevBoard? <a href="#" className="text-dark fw-bold text-decoration-none">Create an account</a></p>
+                    <p>New to DevBoard? <Link to="/signup" className="text-dark fw-bold text-decoration-none">Create an account</Link></p>
                 </div>
             </div>
         </div>
