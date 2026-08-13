@@ -127,7 +127,14 @@ function Sprints(){
                                                         <input type="date" className="form-control" id="sprint-start" />
                                                     </div>
                                                 </div>
-
+                                                <div className="mb-3">
+                                                    <label htmlFor="sprint-total" className="form-label">Total Story Points: </label>
+                                                    <input type="number" className="form-control" id="sprint-total" />
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="sprint-tasks" className="form-label">Total Tasks: </label>
+                                                    <input type="number" className="form-control" id="sprint-tasks" />
+                                                </div>
                                             </form>
                                         </div>
                                         <div className="modal-footer">
@@ -162,12 +169,61 @@ function Sprints(){
                         })}
                     </div>
                 </div>
-                <div>
-                    <h3 className="my-2">Upcoming Sprints</h3>
+                <div className="my-4">
+                    <h3>Upcoming Sprints</h3>
+                    {getSprintByStatus("planned").map((sprint) => {
+                        return (
+                            <div className="accordion" id="accordionExample">
+                                <div className="accordion-item">
+                                    <h2 className="accordion-header">
+                                        <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${sprint.id}`} aria-expanded="true" aria-controls="collapseOne">
+                                            {sprint.name}
+                                        </button>
+                                    </h2>
+                                        <div id={`collapse${sprint.id}`} className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                        <div className="accordion-body">
+                                            <h6 className="mb-2 text-body-secondary">{sprint.goal}</h6>
+                                            <p className="my-1">Start date: {formattedDate(sprint.startDate)}</p>
+                                            <p className="my-1">End date: {formattedDate(sprint.endDate)}</p>
+                                            <p className="my-1">Days Remaining: {daysRemaining(sprint.startDate,sprint.endDate)}</p>
+                                            <p className="my-1">Total Story Points: {sprint.metrics.totalStoryPoints}</p>
+                                            <p className="my-1">Total Tasks: {sprint.metrics.totalTasks}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
                 </div>
-                <div>
-                    <h3 className="my-2">Completed Sprints</h3>
-                </div>
+                <div className="my-3">
+                    <h3>Completed Sprints</h3>
+                    {getSprintByStatus("completed").map((sprint) => {
+                        return (
+                            <div>
+                                <p className="d-inline-flex gap-1">
+                                    <button className="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${sprint.id}`} aria-expanded="false" aria-controls="collapseExample">
+                                        {sprint.name}
+                                    </button>
+                                </p>
+                                <div className="collapse" id={`collapse${sprint.id}`}>
+                                    <div className="card card-body">
+                                        <h6 className="card-subtitle mb-2 text-body-secondary">{sprint.goal}</h6>
+                                        <p className="card-text my-1">Start date: {formattedDate(sprint.startDate)}</p>
+                                        <p className="card-text my-1">End date: {formattedDate(sprint.endDate)}</p>
+                                        <div className="d-flex column-gap-4">
+                                            <p className="card-text my-1">Total Story Points: {sprint.metrics.totalStoryPoints}</p>
+                                            <p className="card-text my-1">Completed Story Points: {sprint.metrics.completedStoryPoints}</p>
+                                        </div>
+                                        <div className="d-flex column-gap-4">
+                                            <p className="card-text my-1">Total Tasks: {sprint.metrics.totalTasks}</p>
+                                            <p className="card-text my-1">Completed Tasks: {sprint.metrics.completedTasks}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>  
             </div>
         </div>
     );
