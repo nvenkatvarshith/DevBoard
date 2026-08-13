@@ -38,12 +38,12 @@ function Sidebar(){
             {
                 menuItems.map((item) => {
                     return (
-                        <div key={item.id}  id = {`menu${item.id}`} className="mt-3 ps-1 menu" role="button" onClick={() => showTab(`menu${item.id}`)}>
-                            <Link to = {item.title.toLowerCase()} className="text-dark text-decoration-none">
-                                <i className={item.icon}></i>
-                                <div className="mt-1">{item.title}</div>
-                            </Link>
-                        </div>
+                        <Link key={item.id} to = {item.title.toLowerCase()} className="text-dark text-decoration-none">
+                            <div id = {`menu${item.id}`} className="mt-3 ps-1 menu" role="button" onClick={() => showTab(`menu${item.id}`)}>
+                                    <i className={item.icon}></i>
+                                    <div className="mt-1">{item.title}</div>
+                            </div>
+                        </Link>
                     )
                 })
             }

@@ -53,6 +53,31 @@ function Sprints(){
             }
     ];
 
+    const formattedDate = (formatDate:string) => {
+        let date = new Date(formatDate);
+        let daysInWeek = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"];
+        let month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "July", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        return `${date.getDate()}/${month[date.getMonth()+1]}/${date.getFullYear()}(${daysInWeek[date.getDay()]})`;
+    };
+
+    const daysRemaining = (start:string,end:string) => {
+        let startDate = new Date(start).getTime();
+        let endDate = new Date(end).getTime();
+        const differenceInMs = endDate - startDate;
+        const daysRemaining = Math.floor(differenceInMs / (1000 * 60 * 60 * 24));
+        return daysRemaining > 0 ? daysRemaining : 0;
+    }; 
+    
+    const getProgress = (total:number, completed:number) => {
+        return completed > 0? `${(completed/total)*100}%` : 0; 
+    };
+
+    const getSprintByStatus = (status: string) => {
+        return sprintsData.filter((sprint) => {
+            return sprint.status === status;
+        })
+    };
+    console.log(getSprintByStatus("completed"));
     return (
         <div className="mt-4 px-5">
             <div className="d-flex justify-content-between border-bottom pb-3">
@@ -71,15 +96,67 @@ function Sprints(){
                     <div className="d-flex justify-content-between">
                         <h3 className="my-2">Your Active Sprints</h3>
                         <div className="d-grid d-md-block mt-2">
-                            <button className="btn btn-outline-success me-2" type="button">Create Sprint</button>
+                            <button type="button" className="btn btn-outline-success me-2" data-bs-toggle="modal" data-bs-target="#createsprint">
+                                Create Sprint
+                            </button>
+
+                            <div className="modal fade" id="createsprint" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div className="modal-dialog modal-dialog-centered">
+                                    <div className="modal-content">
+                                        <div className="modal-header">
+                                            <h1 className="modal-title fs-5" id="exampleModalLabel">New Sprint</h1>
+                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div className="modal-body">
+                                            <form>
+                                                <div className="mb-3">
+                                                    <label htmlFor="sprint-name" className="form-label">Name: </label>
+                                                    <input type="text" className="form-control" id="sprint-name"/>
+                                                </div>
+                                                <div className="mb-3">
+                                                    <label htmlFor="sprint-goal" className="form-label">Goal: </label>
+                                                    <input type="text" className="form-control" id="sprint-goal" />
+                                                </div>
+                                                <div className="row mb-3">
+                                                    <div className="col-6">
+                                                        <label htmlFor="sprint-start" className="form-label">Start Date: </label>
+                                                        <input type="date" className="form-control" id="sprint-start" />
+                                                    </div>
+                                                    <div className="col-6">
+                                                        <label htmlFor="sprint-start" className="form-label">End Date: </label>
+                                                        <input type="date" className="form-control" id="sprint-start" />
+                                                    </div>
+                                                </div>
+
+                                            </form>
+                                        </div>
+                                        <div className="modal-footer">
+                                            <button type="button" className="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" className="btn btn-dark">Save changes</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <button className="btn btn-secondary" type="button">AI Sprint Optimizer</button>
                         </div>
                     </div>
                     <div className="row">
-                        {sprintsData.map((sprint) => {
+                        {getSprintByStatus("active").map((sprint) => {
                             return (
-                                <div className="col-3">
-                                    {sprint.id}
+                                <div className="col-3" key={sprint.id}>
+                                    <div className="card" style = {{width: "18rem"}}>
+                                        <div className="card-body">
+                                            <h5 className="card-title">{sprint.name}</h5>
+                                            <h6 className="card-subtitle mb-2 text-body-secondary">{sprint.goal}</h6>
+                                            <p className="card-text my-1">Start date: {formattedDate(sprint.startDate)}</p>
+                                            <p className="card-text my-1">End date: {formattedDate(sprint.endDate)}</p>
+                                            <p className="card-text my-1">Days Remaining: {daysRemaining(sprint.startDate,sprint.endDate)}</p>
+                                            <div className="progress mt-2" role="progressbar">
+                                                <div className="progress-bar bg-black" style={{width: getProgress(sprint.metrics.totalStoryPoints,sprint.metrics.completedStoryPoints)}}>{getProgress(sprint.metrics.totalStoryPoints,sprint.metrics.completedStoryPoints)}</div>
+                                            </div>
+                                            <button className="btn btn-dark w-100 mt-3">Go to Board</button>
+                                        </div>
+                                    </div>
                                 </div>
                             )
                         })}
