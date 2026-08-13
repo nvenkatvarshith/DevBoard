@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Sidebar(){
     const menuItems = [
         {
@@ -24,22 +26,23 @@ function Sidebar(){
     const showTab = (id:string) => {
         const elements = document.getElementsByClassName("menu");
         for (let i = 0; i < elements.length; i++) {
-            const element = elements[i];
-            element.classList.remove("highlight-menu");
-        }
+            elements[i].classList.remove("highlight-menu");
+        }   
         document.getElementById(id)?.classList.add("highlight-menu");
     };
     return (
         <div className="fs-5 border-end text-center pt-4">
             <div className="mb-5">
-                <h4 className="fw-bold"><a href="/" className="text-dark"><i className="fa-solid fa-d"></i></a></h4>
+                <h4 className="fw-bold"><Link to="/dashboard" className="text-dark"><i className="fa-solid fa-d"></i></Link></h4>
             </div>
             {
                 menuItems.map((item) => {
                     return (
                         <div key={item.id}  id = {`menu${item.id}`} className="mt-3 ps-1 menu" role="button" onClick={() => showTab(`menu${item.id}`)}>
-                            <i className={item.icon}></i>
-                            <div className="mt-1">{item.title}</div>
+                            <Link to = {item.title.toLowerCase()} className="text-dark text-decoration-none">
+                                <i className={item.icon}></i>
+                                <div className="mt-1">{item.title}</div>
+                            </Link>
                         </div>
                     )
                 })

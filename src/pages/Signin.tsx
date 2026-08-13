@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 function Signin(){
+    const navigate = useNavigate();
+    const validateUser = () => {
+        navigate("/dashboard");
+    };
+
     return (
         <div className="container mt-3">
             <div>
@@ -30,7 +35,7 @@ function Signin(){
                                     <Link to="/forgot-password" className="text-dark">Forgot Password?</Link>
                                 </div>
                                 <div className="mb-2">
-                                    <button type="button" className="btn btn-outline-dark w-100">Sign in</button>
+                                    <button type="button" onClick={validateUser} className="btn btn-outline-dark w-100">Sign in</button>
                                 </div>
                                 <div className="mb-2">
                                     <p className="text-center mb-0">Or sign in with...</p>
