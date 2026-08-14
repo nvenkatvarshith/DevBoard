@@ -77,7 +77,11 @@ function Sprints(){
             return sprint.status === status;
         })
     };
-    console.log(getSprintByStatus("completed"));
+    
+    const createSprint = () => {
+        console.log("Create Sprint");
+    };
+
     return (
         <div className="mt-4 px-5">
             <div className="d-flex justify-content-between border-bottom pb-3">
@@ -139,7 +143,7 @@ function Sprints(){
                                         </div>
                                         <div className="modal-footer">
                                             <button type="button" className="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
-                                            <button type="button" className="btn btn-dark">Save changes</button>
+                                            <button type="button" className="btn btn-dark" onClick={createSprint}>Save changes</button>
                                         </div>
                                     </div>
                                 </div>
@@ -173,14 +177,14 @@ function Sprints(){
                     <h3>Upcoming Sprints</h3>
                     {getSprintByStatus("planned").map((sprint) => {
                         return (
-                            <div className="accordion" id="accordionExample">
+                            <div className="accordion" id={`accordioncollapse${sprint.id}`} key={sprint.id}>
                                 <div className="accordion-item">
                                     <h2 className="accordion-header">
-                                        <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${sprint.id}`} aria-expanded="true" aria-controls="collapseOne">
+                                        <button className="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${sprint.id}`} aria-expanded="true" aria-controls={`collapse${sprint.id}`}>
                                             {sprint.name}
                                         </button>
                                     </h2>
-                                        <div id={`collapse${sprint.id}`} className="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                        <div id={`collapse${sprint.id}`} className="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                         <div className="accordion-body">
                                             <h6 className="mb-2 text-body-secondary">{sprint.goal}</h6>
                                             <p className="my-1">Start date: {formattedDate(sprint.startDate)}</p>
@@ -199,9 +203,9 @@ function Sprints(){
                     <h3>Completed Sprints</h3>
                     {getSprintByStatus("completed").map((sprint) => {
                         return (
-                            <div>
+                            <div key={sprint.id}>
                                 <p className="d-inline-flex gap-1">
-                                    <button className="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${sprint.id}`} aria-expanded="false" aria-controls="collapseExample">
+                                    <button className="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse${sprint.id}`} aria-expanded="false" aria-controls={`collapse${sprint.id}`}>
                                         {sprint.name}
                                     </button>
                                 </p>

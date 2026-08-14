@@ -1,4 +1,5 @@
 import Sidebar from "../components/Sidebar";
+import Kanban from "./Kanban";
 import Sprints from "./Sprints";
 
 function Dashboard(){
@@ -8,7 +9,8 @@ function Dashboard(){
                 <Sidebar />
             </div>
             <div className='col-11'>
-                <Sprints />
+                {/* <Sprints /> */}
+                <Kanban />
             </div>
         </div>
     );
