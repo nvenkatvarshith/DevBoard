@@ -39,7 +39,7 @@ function Task(props:TaskCardProps){
                         <div className="mb-2 fw-semibold">{task.assignee?.name}</div>
                         {task.tags.map((tag) => {
                             return (
-                                <span className="bg-secondary-subtle rounded-3 me-2 px-3 py-1">{tag}</span>
+                                <span className="bg-secondary-subtle rounded-3 me-2 px-3 py-1" key={tag}>{tag}</span>
                             )
                         })}
                     </div>

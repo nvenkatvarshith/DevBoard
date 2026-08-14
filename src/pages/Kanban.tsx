@@ -1,5 +1,6 @@
 import Task from "../components/Task";
 import { useForm } from "react-hook-form"
+import { useState } from "react";
 
 function Kanban(){
     type PriorityLevel = "High" | "Medium" | "Low";
@@ -34,7 +35,7 @@ function Kanban(){
 
     const {register, handleSubmit, formState: { errors }} = useForm();
 
-    const mockBoardData:BoardData = {
+    const [mockBoardData,setMockBoardDate] = useState<BoardData>({
             tasks: {
                 "task-451": {
                     id: "task-451",
@@ -124,9 +125,26 @@ function Kanban(){
 
             // 3. The Column Order: Dictates the horizontal order of columns on the board
             columnOrder: ["col-backlog", "col-in-progress", "col-code-review", "col-done"]
-        };
+        });
     
-    const createTask =  (data:any) => console.log(data);
+    const createTask =  (data:any) => {
+        let newTask = {
+            id: `task-${Object.keys(mockBoardData.tasks).length+1}`,
+            title: data.title,
+            description: data.description,
+            priority: data.priority,
+            storyPoints: Number(data.storyPoints),
+            tags: data.tags.split(","),
+            assignee: {
+                name: data.assignee,
+                avatar: ""
+            },
+            aiContext: ""
+        };
+        mockBoardData.tasks[newTask.id] = newTask;
+        mockBoardData.columns["col-backlog"].taskIds.push(newTask.id);
+        setMockBoardDate(mockBoardData);
+    };
         
     return (
         <div className="mt-3 mx-3">
@@ -188,7 +206,7 @@ function Kanban(){
                                             {errors.assignee?.message && <p className="text-danger small mb-0">{String(errors.assignee.message)}</p>}
                                         </div>
                                         <div>
-                                            <label htmlFor="priority" className="form-label">Assignee<span className='text-danger'>*</span></label>
+                                            <label htmlFor="priority" className="form-label">Priority<span className='text-danger'>*</span></label>
                                             <select className="form-select"
                                              {...register('priority', { 
                                                 required: { value: true, message: 'Assignee is required' }
@@ -199,6 +217,19 @@ function Kanban(){
                                             </select>
                                             {errors.priority?.message && <p className="text-danger small mb-0">{String(errors.priority.message)}</p>}
                                         </div>
+                                    </div>
+                                    <div className="mb-2">
+                                        <label htmlFor="storyPoints" className="form-label">Story points<span className='text-danger'>*</span></label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            id="storyPoints"
+                                            placeholder="Enter Story points"
+                                            {...register('storyPoints', { 
+                                                required: { value: true, message: 'StoryPoints is required' }
+                                            })}
+                                        />
+                                        {errors.storyPoints?.message && <p className="text-danger small mb-0">{String(errors.storyPoints.message)}</p>}
                                     </div>
                                     <div className="mb-3">
                                         <label htmlFor="tags" className="form-label">Task tags</label>
@@ -232,7 +263,7 @@ function Kanban(){
                             <div>
                                 {mockBoardData.columns[column].taskIds.map((taskId) => {
                                     return (
-                                        <div className="mb-3">
+                                        <div className="mb-3" key={taskId}>
                                             <Task task = {mockBoardData.tasks[taskId]} key={taskId}/>
                                         </div>
                                     )
