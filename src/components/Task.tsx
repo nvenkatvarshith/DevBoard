@@ -1,3 +1,4 @@
+import { useDraggable } from "@dnd-kit/react";
 import { useForm } from "react-hook-form"
 
 type PriorityLevel = "High" | "Medium" | "Low";
@@ -33,6 +34,9 @@ function Task(props:TaskCardProps){
             case "Low": return "info"
         }
     };
+    const {ref} = useDraggable({
+            id: `draggable${task.id}`,
+        });
     const updateCurrentTask = (data: any) => {
         let updatedTask = {
             id: task.id,
@@ -51,7 +55,7 @@ function Task(props:TaskCardProps){
     };
     return (
         <div>
-            <button className="btn" type="button" data-bs-toggle="offcanvas" data-bs-target={`#editTask${task.id}`} aria-controls={`editTask${task.id}`}>
+            <button className="btn" type="button" data-bs-toggle="offcanvas" data-bs-target={`#editTask${task.id}`} aria-controls={`editTask${task.id}`} ref={ref}>
                 <div className="card" style={{width: '18rem'}}>
                     <div className="card-body">
                         <h5 className="card-title fw-bold">{task.title}</h5>
