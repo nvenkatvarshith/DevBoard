@@ -1,6 +1,5 @@
+import { Routes, Route, Outlet } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import Kanban from "./Kanban";
-import Sprints from "./Sprints";
 
 function Dashboard(){
     return (
@@ -9,8 +8,7 @@ function Dashboard(){
                 <Sidebar />
             </div>
             <div className='col-11'>
-                {/* <Sprints /> */}
-                <Kanban />
+                <Outlet />
             </div>
         </div>
     );

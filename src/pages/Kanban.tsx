@@ -145,7 +145,17 @@ function Kanban(){
         mockBoardData.columns["col-backlog"].taskIds.push(newTask.id);
         setMockBoardDate(mockBoardData);
     };
-        
+    
+    const updateTask = (updatedTask:any) => {
+        setMockBoardDate((prevData: any) => ({
+            ...prevData,
+            tasks: {
+                ...prevData.tasks,
+                [updatedTask.id]: updatedTask
+            }
+        }));
+    }
+    
     return (
         <div className="mt-3 mx-3">
             <div className="d-flex justify-content-between border-bottom pb-3">
@@ -264,7 +274,7 @@ function Kanban(){
                                 {mockBoardData.columns[column].taskIds.map((taskId) => {
                                     return (
                                         <div className="mb-3" key={taskId}>
-                                            <Task task = {mockBoardData.tasks[taskId]} key={taskId}/>
+                                            <Task task = {mockBoardData.tasks[taskId]} updateTask = {updateTask} key={taskId}/>
                                         </div>
                                     )
                                 })}

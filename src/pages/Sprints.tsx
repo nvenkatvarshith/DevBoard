@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Sprints(){
     const sprintsData = [
             {
@@ -165,7 +167,7 @@ function Sprints(){
                                             <div className="progress mt-2" role="progressbar">
                                                 <div className="progress-bar bg-black" style={{width: getProgress(sprint.metrics.totalStoryPoints,sprint.metrics.completedStoryPoints)}}>{getProgress(sprint.metrics.totalStoryPoints,sprint.metrics.completedStoryPoints)}</div>
                                             </div>
-                                            <button className="btn btn-dark w-100 mt-3">Go to Board</button>
+                                            <Link to= {`kanban/${sprint.id}`} className="btn btn-dark w-100 mt-3">Go to Board</Link>
                                         </div>
                                     </div>
                                 </div>
