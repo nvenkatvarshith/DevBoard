@@ -1,131 +1,19 @@
 import Task from "../components/Task";
 import { useForm } from "react-hook-form"
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useDroppable,DragDropProvider } from '@dnd-kit/react';
+import SprintContext from "../SprintContext";
+import { useParams } from 'react-router-dom';
 
 function Kanban(){
-    type PriorityLevel = "High" | "Medium" | "Low";
-
-    interface Assignee {
-    name: string;
-    avatar: string;
-    }
-
-    interface Task {
-    id: string;
-    title: string;
-    description: string;
-    priority: PriorityLevel;
-    storyPoints: number;
-    tags: string[];
-    assignee: Assignee | null;
-    aiContext: string | null;
-    }
-
-    interface Column {
-    id: string;
-    title: string;
-    taskIds: string[];
-    }
-
-    interface BoardData {
-    tasks: Record<string, Task>;
-    columns: Record<string, Column>;
-    columnOrder: string[];
-    }
+    const data = useContext(SprintContext);
+    const { sprintid } = useParams();
 
     const {register, handleSubmit, formState: { errors }} = useForm();
 
-    const [mockBoardData,setMockBoardDate] = useState<BoardData>({
-            tasks: {
-                "task-451": {
-                    id: "task-451",
-                    title: "Implement error boundary for AI module",
-                    description: "Create a fallback UI to prevent the whole board from crashing if the LLM API returns a malformed response.",
-                    priority: "High",
-                    storyPoints: 5,
-                    tags: ["Frontend", "Bug"],
-                    assignee: {
-                        name: "Alex Chen",
-                        avatar: "https://i.pravatar.cc/150?u=alex"
-                    },
-                    aiContext: "Error logs show occasional JSON parse failures from the streaming endpoint."
-                },
-                "task-452": {
-                    id: "task-452",
-                    title: "Optimize LLM response caching",
-                    description: "Implement local storage caching so identical task generation requests don't hit the API twice.",
-                    priority: "Medium",
-                    storyPoints: 8,
-                    tags: ["Performance", "AI"],
-                    assignee: {
-                        name: "Sarah Jenkins",
-                        avatar: "https://i.pravatar.cc/150?u=sarah"
-                    },
-                    aiContext: null
-                },
-                "task-453": {
-                    id: "task-453",
-                    title: "Design system dark mode toggle",
-                    description: "Wire up the global theme context to support dark mode across the Kanban board.",
-                    priority: "Low",
-                    storyPoints: 3,
-                    tags: ["UI/UX", "Frontend"],
-                    assignee: {
-                        name: "Alex Chen",
-                        avatar: "https://i.pravatar.cc/150?u=alex"
-                    },
-                    aiContext: null
-                },
-                "task-454": {
-                    id: "task-454",
-                    title: "Secure OAuth callback routes",
-                    description: "Ensure the GitHub and GitLab OAuth redirects are properly validated to prevent CSRF attacks.",
-                    priority: "High",
-                    storyPoints: 13,
-                    tags: ["Security", "Backend"],
-                    assignee: {
-                        name: "David Kim",
-                        avatar: "https://i.pravatar.cc/150?u=david"
-                    },
-                    aiContext: null
-                },
-                "task-455": {
-                    id: "task-455",
-                    title: "Setup CI/CD pipeline",
-                    description: "Configure GitHub Actions to run Jest tests and deploy to Vercel on main branch merge.",
-                    priority: "Medium",
-                    storyPoints: 5,
-                    tags: ["DevOps"],
-                    assignee: null, // Example of an unassigned task
-                    aiContext: null
-                }
-            },
-            columns: {
-                "col-backlog": {
-                    id: "col-backlog",
-                    title: "BACKLOG",
-                    taskIds: ["task-455", "task-453"] 
-                },
-                "col-in-progress": {
-                    id: "col-in-progress",
-                    title: "IN PROGRESS",
-                    taskIds: ["task-452"]
-                },
-                "col-code-review": {
-                    id: "col-code-review",
-                    title: "CODE REVIEW",
-                    taskIds: ["task-454"]
-                },
-                "col-done": {
-                    id: "col-done",
-                    title: "DONE",
-                    taskIds: ["task-451"]
-                }
-            },
-
-            // 3. The Column Order: Dictates the horizontal order of columns on the board
-            columnOrder: ["col-backlog", "col-in-progress", "col-code-review", "col-done"]
+    const [mockBoardData,setMockBoardDate] = useState({
+            tasks: data.devBoardState.tasks,
+            boards: data.devBoardState.boards[sprintid]
         });
     
     const createTask =  (data:any) => {
@@ -143,7 +31,7 @@ function Kanban(){
             aiContext: ""
         };
         mockBoardData.tasks[newTask.id] = newTask;
-        mockBoardData.columns["col-backlog"].taskIds.push(newTask.id);
+        mockBoardData.boards.columns["col-backlog"].taskIds.push(newTask.id);
         setMockBoardDate(mockBoardData);
     };
     
@@ -160,14 +48,14 @@ function Kanban(){
     return (
         <DragDropProvider
             onDragStart={({operation}) => {
-                console.log('Started dragging', operation.source.id);
+                console.log('Started dragging', operation.source?.id);
             }}
 
             onDragEnd={({operation}) => {
                 const {source, target} = operation;
-                console.log(source, target);
+                console.log(source?.id, target);
                 if (target) {
-                    console.log(`Dropped ${source.id} onto ${target.id}`);
+                    console.log(`Dropped ${source?.id} onto ${target.id}`);
                 }
             }}
         >
@@ -277,18 +165,19 @@ function Kanban(){
                     </div>
                 </div>
                 <div className="row column-gap-2 flex-nowrap">
-                    {mockBoardData.columnOrder.map((column, index) => {
+                    {mockBoardData.boards.columnOrder.map((column:any) => {
+                        const columnData = mockBoardData.boards.columns[column];
                         const {isDropTarget, ref} = useDroppable({
-                            id: mockBoardData.columns[column].title,
+                            id: columnData.id,
                         });
                         return (
-                            <div className={`col-lg-3 pt-2 ${isDropTarget? 'bg-secondary': 'bg-secondary-subtle'}`} key={column} ref={ref} id={mockBoardData.columns[column].id}>
+                            <div className={`col-lg-3 pt-2 ${isDropTarget? 'bg-secondary': 'bg-secondary-subtle'}`} key={column} ref={ref} id={columnData.id}>
                                 <div className="d-flex justify-content-between">
-                                    {mockBoardData.columns[column].title}
+                                    {columnData.title}
                                     <p className="bg-secondary px-3 py-1 rounded-3 text-light">3</p>
                                 </div>
                                 <div>
-                                    {mockBoardData.columns[column].taskIds.map((taskId) => {
+                                    {columnData.taskIds.map((taskId:any) => {
                                         return (
                                             <div className="mb-3" key={taskId} id={taskId}>
                                                 <Task task = {mockBoardData.tasks[taskId]} updateTask = {updateTask} key={taskId}/>

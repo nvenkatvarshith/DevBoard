@@ -1,59 +1,11 @@
 import { Link } from "react-router-dom";
+import { useContext, useState } from 'react';
+import SprintContext from "../SprintContext";
 
 function Sprints(){
-    const sprintsData = [
-            {
-                id: "spr-001",
-                name: "Sprint 1: Core Authentication",
-                goal: "Implement secure login/signup flows with OAuth integration.",
-                status: "completed",
-                startDate: "2026-07-01T00:00:00Z",
-                endDate: "2026-07-14T23:59:59Z",
-                metrics: {
-                totalStoryPoints: 45,
-                completedStoryPoints: 45,
-                totalTasks: 12,
-                completedTasks: 12
-                },
-                aiRetrospective: "Sprint completed successfully. The team maintained a stable velocity, though OAuth integration took 15% longer than estimated."
-            },
-            {
-                id: "spr-002",
-                name: "Sprint 2: Kanban Foundation",
-                goal: "Build drag-and-drop board, routing, and basic CRUD for tasks.",
-                status: "active",
-                startDate: "2026-08-01T00:00:00Z",
-                endDate: "2026-08-14T23:59:59Z",
-                metrics: {
-                totalStoryPoints: 50,
-                completedStoryPoints: 32,
-                totalTasks: 18,
-                completedTasks: 10
-                },
-                // In a real app, this might just be an array of task IDs fetched separately,
-                // but included here for a complete view of the sprint's scope.
-                assignedTasks: [
-                "task-451", 
-                "task-452", 
-                "task-453"
-                ]
-            },
-            {
-                id: "spr-003",
-                name: "Sprint 3: AI Integration",
-                goal: "Integrate LLM for auto-task breakdown and summarization features.",
-                status: "planned",
-                startDate: "2026-08-15T00:00:00Z",
-                endDate: "2026-08-28T23:59:59Z",
-                metrics: {
-                totalStoryPoints: 60,
-                completedStoryPoints: 0,
-                totalTasks: 15,
-                completedTasks: 0
-                },
-                assignedTasks: []
-            }
-    ];
+    const data = useContext(SprintContext);
+
+    const [sprintsData, setSprintsData] = useState(data.devBoardState["sprints"]);
 
     const formattedDate = (formatDate:string) => {
         let date = new Date(formatDate);
@@ -71,11 +23,11 @@ function Sprints(){
     }; 
     
     const getProgress = (total:number, completed:number) => {
-        return completed > 0? `${(completed/total)*100}%` : 0; 
+        return completed > 0? `${Math.floor((completed/total)*100)}%` : 0; 
     };
 
     const getSprintByStatus = (status: string) => {
-        return sprintsData.filter((sprint) => {
+        return Object.values(sprintsData).filter((sprint) => {
             return sprint.status === status;
         })
     };
@@ -83,6 +35,7 @@ function Sprints(){
     const createSprint = () => {
         console.log("Create Sprint");
     };
+
 
     return (
         <div className="mt-4 px-5">
@@ -154,7 +107,7 @@ function Sprints(){
                         </div>
                     </div>
                     <div className="row">
-                        {getSprintByStatus("active").map((sprint) => {
+                        {getSprintByStatus("active").map((sprint:any) => {
                             return (
                                 <div className="col-3" key={sprint.id}>
                                     <div className="card" style = {{width: "18rem"}}>
@@ -177,7 +130,7 @@ function Sprints(){
                 </div>
                 <div className="my-4">
                     <h3>Upcoming Sprints</h3>
-                    {getSprintByStatus("planned").map((sprint) => {
+                    {getSprintByStatus("planned").map((sprint:any) => {
                         return (
                             <div className="accordion" id={`accordioncollapse${sprint.id}`} key={sprint.id}>
                                 <div className="accordion-item">
@@ -203,7 +156,7 @@ function Sprints(){
                 </div>
                 <div className="my-3">
                     <h3>Completed Sprints</h3>
-                    {getSprintByStatus("completed").map((sprint) => {
+                    {getSprintByStatus("completed").map((sprint:any) => {
                         return (
                             <div key={sprint.id}>
                                 <p className="d-inline-flex gap-1">
