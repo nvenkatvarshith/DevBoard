@@ -33,6 +33,7 @@ function Kanban(){
         mockBoardData.tasks[newTask.id] = newTask;
         mockBoardData.boards.columns["col-backlog"].taskIds.push(newTask.id);
         setMockBoardDate(mockBoardData);
+        document.querySelector<HTMLElement>('#staticBackdrop .btn-close')?.click();
     };
     
     const updateTask = (updatedTask:any) => {
@@ -43,6 +44,7 @@ function Kanban(){
                 [updatedTask.id]: updatedTask
             }
         }));
+        document.querySelector<HTMLElement>(`#editTask${updatedTask.id} .btn-close`)?.click();
     }
 
     return (

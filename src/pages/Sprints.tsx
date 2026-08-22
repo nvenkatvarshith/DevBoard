@@ -1,11 +1,18 @@
 import { Link } from "react-router-dom";
 import { useContext, useState } from 'react';
 import SprintContext from "../SprintContext";
+import { useForm } from "react-hook-form"
 
 function Sprints(){
     const data = useContext(SprintContext);
 
-    const [sprintsData, setSprintsData] = useState(data.devBoardState["sprints"]);
+    const {register, handleSubmit, formState: { errors }} = useForm();
+
+    const [mockBoardData,setMockBoardDate] = useState({
+        sprints : data.devBoardState["sprints"],
+        tasks: data.devBoardState.tasks,
+        boards: data.devBoardState.boards
+    });
 
     const formattedDate = (formatDate:string) => {
         let date = new Date(formatDate);
@@ -27,15 +34,33 @@ function Sprints(){
     };
 
     const getSprintByStatus = (status: string) => {
-        return Object.values(sprintsData).filter((sprint) => {
+        return Object.values(mockBoardData.sprints).filter((sprint) => {
             return sprint.status === status;
         })
     };
-    
-    const createSprint = () => {
-        console.log("Create Sprint");
-    };
 
+    const createSprint =  (data:any) => {
+        let newSprint = {
+            id: `spr-${Object.keys(mockBoardData.sprints).length+1}`,
+            name: data.name,
+            goal: data.goal,
+            status: "planned",
+            startDate: data.startDate,
+            endDate:  data.endDate,
+            metrics: {
+                totalStoryPoints: data.sprintPoints,
+                completedStoryPoints: 0,
+                totalTasks: data.sprintTasks,
+                completedTasks: 0
+            }
+        };
+        console.log(data);
+        mockBoardData.sprints[newSprint.id] = newSprint;
+        console.log(mockBoardData);
+        setMockBoardDate(mockBoardData);
+        localStorage.setItem("devBoardState",JSON.stringify(mockBoardData));
+        document.querySelector<HTMLElement>('#createsprint .btn-close')?.click();
+    };
 
     return (
         <div className="mt-4 px-5">
@@ -66,40 +91,71 @@ function Sprints(){
                                             <h1 className="modal-title fs-5" id="exampleModalLabel">New Sprint</h1>
                                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
-                                        <div className="modal-body">
-                                            <form>
+                                        <form onSubmit={handleSubmit(createSprint)}>
+                                            <div className="modal-body">
                                                 <div className="mb-3">
                                                     <label htmlFor="sprint-name" className="form-label">Name: </label>
-                                                    <input type="text" className="form-control" id="sprint-name"/>
+                                                    <input type="text" className="form-control" id="sprint-name"
+                                                        {...register('name', { 
+                                                            required: { value: true, message: 'Sprint Name  is required' }
+                                                        })}
+                                                    />
+                                                    {errors.name?.message && <p className="text-danger small mb-0">{String(errors.name.message)}</p>}
                                                 </div>
                                                 <div className="mb-3">
                                                     <label htmlFor="sprint-goal" className="form-label">Goal: </label>
-                                                    <input type="text" className="form-control" id="sprint-goal" />
+                                                    <input type="text" className="form-control" id="sprint-goal" 
+                                                        {...register('goal', { 
+                                                            required: { value: true, message: 'Sprint Goal  is required' }
+                                                        })}
+                                                    />
+                                                    {errors.goal?.message && <p className="text-danger small mb-0">{String(errors.goal.message)}</p>}
                                                 </div>
                                                 <div className="row mb-3">
                                                     <div className="col-6">
                                                         <label htmlFor="sprint-start" className="form-label">Start Date: </label>
-                                                        <input type="date" className="form-control" id="sprint-start" />
+                                                        <input type="date" className="form-control" id="sprint-start" 
+                                                        {...register('startDate', { 
+                                                            required: { value: true, message: 'Sprint Start Date  is required' }
+                                                        })}
+                                                        />
+                                                        {errors.startDate?.message && <p className="text-danger small mb-0">{String(errors.startDate.message)}</p>}
                                                     </div>
                                                     <div className="col-6">
                                                         <label htmlFor="sprint-start" className="form-label">End Date: </label>
-                                                        <input type="date" className="form-control" id="sprint-start" />
+                                                        <input type="date" className="form-control" id="sprint-start" 
+                                                        {...register('endDate', { 
+                                                            required: { value: true, message: 'Sprint End Date  is required' }
+                                                        })}
+                                                        />
+                                                        {errors.endDate?.message && <p className="text-danger small mb-0">{String(errors.endDate.message)}</p>}
                                                     </div>
                                                 </div>
                                                 <div className="mb-3">
                                                     <label htmlFor="sprint-total" className="form-label">Total Story Points: </label>
-                                                    <input type="number" className="form-control" id="sprint-total" />
+                                                    <input type="number" className="form-control" id="sprint-total" 
+                                                    {...register('sprintPoints', { 
+                                                        required: { value: true, message: 'Sprint Goal  is required' }
+                                                    })}
+                                                    />
+                                                    {errors.sprintPoints?.message && <p className="text-danger small mb-0">{String(errors.sprintPoints.message)}</p>}
                                                 </div>
                                                 <div className="mb-3">
                                                     <label htmlFor="sprint-tasks" className="form-label">Total Tasks: </label>
-                                                    <input type="number" className="form-control" id="sprint-tasks" />
+                                                    <input type="number" className="form-control" id="sprint-tasks" 
+                                                    {...register('sprintTasks', { 
+                                                        required: { value: true, message: 'Sprint Goal  is required' }
+                                                    })}
+                                                    />
+                                                    {errors.sprintTasks?.message && <p className="text-danger small mb-0">{String(errors.sprintTasks.message)}</p>}
                                                 </div>
-                                            </form>
-                                        </div>
-                                        <div className="modal-footer">
-                                            <button type="button" className="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
-                                            <button type="button" className="btn btn-dark" onClick={createSprint}>Save changes</button>
-                                        </div>
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                                                <button type="submit" className="btn btn-dark">Save changes</button>
+                                            </div>
+                                        </form>
+
                                     </div>
                                 </div>
                             </div>
